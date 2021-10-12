@@ -5,65 +5,71 @@ const cron = require('node-cron');
 const mySecret = process.env['supabaseKey']
 const supabaseURL = 'https://hnmrxumhbwsnuykpllwy.supabase.co'
 
-//console.log(mySecret)
-//console.log(supabaseURL)
-
 const supabase = createClient(supabaseURL,mySecret)
 
-//supabase.from('countries').select('*').limit(5).then(console.log).catch(console.error)
-
 // get btc/usd and btc/hkd daily rate
-// for date format dd-mm-yyyy
-// let url = "https://api.coingecko.com/api/v3/coins/bitcoin/history?localization=false&date=10-10-2021"
-
 let url = "https://api.coingecko.com/api/v3/coins/bitcoin/history?localization=false&date="
 
-console.log(url)
+//console.log(url)
 
-//cron.schedule('* * * * *', async function() {
-    // run task every 24 hours:  0 0 * * *
-    const ONE_HOUR = 60 * 60 * 1000;
-    const DAILY = ONE_HOUR * 24;
-    //console.log('running a task every hour', ONE_HOUR);
+async function insertBTCrate(daydata) {
+  const { result, error } = await supabase
+    .from('BTCHistorical')
+    .insert([
+     daydata
+    ])
+//  console.log('result:', result, 'error: ', error)
+  return result
+}
 
+cron.schedule('1 0 * * *', async function() {
+    // run task daily At 00:01  1 0 * * *
+    // console.log('running a task daily');
     const today = new Date()
     console.log(today)
 
+    // reverse to DD-MM-YYY
     const day = today.getDate()
     const month = today.getMonth()+1
     const year = today.getFullYear()
     const newdate = day + "-" + month + "-" + year
     console.log("Date: ", newdate)
 
+    // format is YYYY-MM-DD
     const dbdate = year + "-" + month + "-" + day
     console.log("Date for DB: ", dbdate)
 
-    const static_date = "10-10-2021"
-    url  = url + newdate
-    console.log(url)
+    // const static_date = "12-10-2021"
+    // const dbdate = "2021-10-12"
+    let full_url  = url + newdate
+    console.log(full_url)
 
     console.log("running axios")
-    // await
-    axios.get(url).then(
-        function(response) {
-            // format is YYYY-MM-DD
-            // reverse to DD-MM-YYY
-            
-            const data = response.data;
+    await axios.get(full_url).then(
+        async function(response) {
+
+            const data = await response.data;
             // console.log('getting data', data)
             const btcusd = data['market_data']['current_price']['usd']
-            console.log('btcusd', btcusd)
-
             const btchkd = data['market_data']['current_price']['hkd']
-            console.log('btchkd', btchkd)
 
             const satsrate = 100000000
-            const sathkd_rate = satsrate/btchkd
-            console.log('satshkd', sathkd_rate)
+            const sathkd = satsrate/btchkd
+            const usdsat = satsrate/btcusd
 
-            const usdsat_rate = satsrate/btcusd
-            console.log('usdsat', usdsat_rate)
+            const row =  { date: dbdate, 
+                          btcusd_rate: btcusd, 
+                          btchkd_rate: btchkd,
+                          usdsat_rate: usdsat, 
+                          sathkd_rate: sathkd}
 
-        }
-    )
-    //})
+            console.log("new row: ", row)
+
+            await insertBTCrate(row).then((data) => {
+              console.log(data)
+            })
+        })
+    // reset url to blank before next cronjob
+    full_url = ""
+    console.log(" reset url ", full_url)
+})
