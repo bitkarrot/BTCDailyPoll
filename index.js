@@ -4,12 +4,10 @@ const cron = require('node-cron');
 
 const mySecret = process.env['supabaseKey']
 const supabaseURL = 'https://hnmrxumhbwsnuykpllwy.supabase.co'
-
 const supabase = createClient(supabaseURL,mySecret)
 
 // get btc/usd and btc/hkd daily rate
 let url = "https://api.coingecko.com/api/v3/coins/bitcoin/history?localization=false&date="
-
 //console.log(url)
 
 async function insertBTCrate(daydata) {
@@ -22,7 +20,7 @@ async function insertBTCrate(daydata) {
   return result
 }
 
-cron.schedule('1 0 * * *', async function() {
+cron.schedule('* * * * *', async function() {
     // run task daily At 00:01  1 0 * * *
     // console.log('running a task daily');
     const today = new Date()
