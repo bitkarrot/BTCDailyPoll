@@ -1,6 +1,6 @@
 const { createClient } = require('@supabase/supabase-js')
 const axios = require('axios')
-const cron = require('node-cron');
+//const cron = require('node-cron');
 
 const mySecret = process.env['supabaseKey']
 const supabaseURL = 'https://hnmrxumhbwsnuykpllwy.supabase.co'
@@ -20,7 +20,7 @@ async function insertBTCrate(daydata) {
   return result
 }
 
-cron.schedule('* * * * *', async function() {
+async function BTCDaily() {
     // run task daily At 00:01  1 0 * * *
     // console.log('running a task daily');
     const today = new Date()
@@ -70,4 +70,6 @@ cron.schedule('* * * * *', async function() {
     // reset url to blank before next cronjob
     full_url = ""
     console.log(" reset url ", full_url)
-})
+}
+
+BTCDaily()
