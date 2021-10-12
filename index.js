@@ -5,8 +5,8 @@ const cron = require('node-cron');
 const mySecret = process.env['supabaseKey']
 const supabaseURL = 'https://hnmrxumhbwsnuykpllwy.supabase.co'
 
-console.log(mySecret)
-console.log(supabaseURL)
+//console.log(mySecret)
+//console.log(supabaseURL)
 
 const supabase = createClient(supabaseURL,mySecret)
 
@@ -14,8 +14,9 @@ const supabase = createClient(supabaseURL,mySecret)
 
 // get btc/usd and btc/hkd daily rate
 // for date format dd-mm-yyyy
-let url = "https://api.coingecko.com/api/v3/coins/bitcoin/history?localization=false&date=10-10-2021"
+// let url = "https://api.coingecko.com/api/v3/coins/bitcoin/history?localization=false&date=10-10-2021"
 
+let url = "https://api.coingecko.com/api/v3/coins/bitcoin/history?localization=false&date="
 
 console.log(url)
 
@@ -24,22 +25,32 @@ console.log(url)
     const ONE_HOUR = 60 * 60 * 1000;
     const DAILY = ONE_HOUR * 24;
     //console.log('running a task every hour', ONE_HOUR);
+
+    const today = new Date()
+    console.log(today)
+
+    const day = today.getDate()
+    const month = today.getMonth()+1
+    const year = today.getFullYear()
+    const newdate = day + "-" + month + "-" + year
+    console.log("Date: ", newdate)
+
+    const dbdate = year + "-" + month + "-" + day
+    console.log("Date for DB: ", dbdate)
+
+    const static_date = "10-10-2021"
+    url  = url + newdate
+    console.log(url)
+
     console.log("running axios")
     // await
     axios.get(url).then(
         function(response) {
-            
-            const static_date = "10-10-2021"
-            
             // format is YYYY-MM-DD
-            const today = new Date().toISOString().split('T')[0]
-            const day = 
-
-            console.log(today)
+            // reverse to DD-MM-YYY
             
-
             const data = response.data;
-//            console.log('getting data', data)
+            // console.log('getting data', data)
             const btcusd = data['market_data']['current_price']['usd']
             console.log('btcusd', btcusd)
 
@@ -52,8 +63,6 @@ console.log(url)
 
             const usdsat_rate = satsrate/btcusd
             console.log('usdsat', usdsat_rate)
-
-
 
         }
     )
