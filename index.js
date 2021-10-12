@@ -2,6 +2,14 @@ const { createClient } = require('@supabase/supabase-js')
 const axios = require('axios')
 const cron = require('node-cron');
 
+const express = require('express');
+app = express();
+app.get('/', function(req, res) {
+  res.send("Hello World!")
+})
+app.listen(3000);
+
+
 const mySecret = process.env['supabaseKey']
 const supabaseURL = 'https://hnmrxumhbwsnuykpllwy.supabase.co'
 const supabase = createClient(supabaseURL,mySecret)
