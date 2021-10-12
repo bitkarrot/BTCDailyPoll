@@ -72,4 +72,4 @@ async function BTCDaily() {
     console.log(" reset url ", full_url)
 }
 
-BTCDaily()
+const result = await BTCDaily()
