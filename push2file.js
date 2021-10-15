@@ -7,7 +7,7 @@ const fs = require('fs')
 let url = "https://api.coingecko.com/api/v3/coins/bitcoin/history?localization=false&date="
     //console.log(url)
 
-const fileName = "hkd_historical"
+const fileName = "historical_new"
 const dirPath = path.join(__dirname, fileName);
 
 async function insertBTCrate(daydata) {
