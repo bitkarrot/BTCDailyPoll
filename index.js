@@ -2,9 +2,9 @@ const { createClient } = require('@supabase/supabase-js')
 const axios = require('axios')
 const path = require('path');
 
-const mySecret = process.env['supabaseKey']
-const supabaseURL = 'https://hnmrxumhbwsnuykpllwy.supabase.co'
-const supabase = createClient(supabaseURL, mySecret)
+//const mySecret = process.env['supabaseKey']
+//const supabaseURL = 'https://hnmrxumhbwsnuykpllwy.supabase.co'
+//const supabase = createClient(supabaseURL, mySecret)
 
 // get btc/usd and btc/hkd daily rate
 let url = "https://api.coingecko.com/api/v3/coins/bitcoin/history?localization=false&date="
@@ -20,17 +20,14 @@ async function insertBTCrate(daydata) {
     return result
 }
 
+/*     // get yesterday 
+const date = new Date()
+date.setDate(date.getDate() - 1);
+const today = date
+*/
+
+
 async function BTCDaily() {
-    // run task daily At 00:01  1 0 * * *
-    // console.log('running a task daily');
-
-    // get yesterday 
-    /*
-    const date = new Date()
-    date.setDate(date.getDate() - 1);
-    const today = date
-    */
-
     const today = new Date()
     console.log(today)
 
@@ -60,22 +57,22 @@ async function BTCDaily() {
                 const btchkd = data['market_data']['current_price']['hkd']
 
                 const satsrate = 100000000
-                const sathkd = satsrate / btchkd
-                const usdsat = satsrate / btcusd
+                const sathkd = parseInt(satsrate / btchkd)
+                const usdsat = parseInt(satsrate / btcusd)
 
                 const row = {
+                    btcusd_rate: parseInt(btcusd),
                     date: dbdate,
-                    btcusd_rate: btcusd,
-                    btchkd_rate: btchkd,
                     usdsat_rate: usdsat,
-                    sathkd_rate: sathkd
+                    sathkd_rate: sathkd,
+                    btchkd_rate: parseFloat(btchkd).toFixed(2),
                 }
 
                 console.log("new row: ", row)
 
-                await insertBTCrate(row).then((data) => {
-                    console.log(data)
-                })
+                //                await insertBTCrate(row).then((data) => {
+                //                    console.log(data)
+                //                })
             })
         // reset url to blank before next cronjob
     full_url = ""

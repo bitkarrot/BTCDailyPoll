@@ -1,22 +1,63 @@
 const shellJs = require('shelljs')
 const fs = require('fs')
 const path = require('path');
+const axios = require('axios')
 const sleep = (waitTimeInMs) => new Promise(resolve => setTimeout(resolve, waitTimeInMs));
 
+const repo_name = '/updategit'
 const USER = 'bitkarrot';
 const PASS = process.env.PASS
-const REPO = 'github.com/bitkarrot/updategit';
-// change this repo to satshkd-vercel, 
-// append to /public/static/hkd_historical
+const REPO = 'github.com/bitkarrot' + repo_name;
 
-const dirPath = path.join(__dirname, '/updategit');
+const dirPath = path.join(__dirname, repo_name);
 console.log("directory: ", dirPath)
-
 const git = require('simple-git')();
 const remote = `https://${USER}:${PASS}@${REPO}`;
 
+async function BTCDaily() {
+    // get btc/usd and btc/hkd daily rate
+    let url = "https://api.coingecko.com/api/v3/coins/bitcoin/history?localization=false&date="
+
+    const today = new Date()
+    console.log(today)
+        // reverse to DD-MM-YYY
+    const day = today.getDate()
+    const month = today.getMonth() + 1
+    const year = today.getFullYear()
+    const newdate = day + "-" + month + "-" + year
+    console.log("Date: ", newdate)
+
+    // format is YYYY-MM-DD
+    const dbdate = year + "-" + month + "-" + day
+    console.log("Date for DB: ", dbdate)
+    let full_url = url + newdate
+    console.log(full_url)
+
+    console.log("running axios")
+    await axios.get(full_url).then(
+        async function(response) {
+            const data = await response.data;
+            // console.log('getting data', data)
+            const btcusd = data['market_data']['current_price']['usd']
+            const btchkd = data['market_data']['current_price']['hkd']
+            const satsrate = 100000000
+            const sathkd = parseInt(satsrate / btchkd)
+            const usdsat = parseInt(satsrate / btcusd)
+
+            const row = {
+                btcusd_rate: parseInt(btcusd),
+                date: dbdate,
+                usdsat_rate: usdsat,
+                sathkd_rate: sathkd,
+                btchkd_rate: parseFloat(btchkd).toFixed(2),
+            }
+            return row
+        })
+}
+
+
 // replace this function with BTCDaily()
-async function makeFile() {
+async function updateFile() {
     console.log("dirPath ", dirPath)
         // check if directory exists
     fs.access(dirPath, (err) => {
@@ -29,6 +70,9 @@ async function makeFile() {
         shellJs.cat('./new_file')
 
         const now_date = "\n" + new Date().toLocaleString()
+        const row = BTCDaily()
+        console.log("new row: ", row)
+
         await fs.appendFile('./new_file', now_date, function(err) {
             if (err) {
                 console.log("error writing to file",
@@ -52,7 +96,6 @@ async function initialiseRepo() {
     console.log("initialize result: ", res)
     return true
 }
-
 
 async function gitPushSeq() {
     // Add file for commit and push
@@ -84,7 +127,6 @@ async function gitPushSeq() {
             console.log('repo push failed');
         });
 
-
     const status = await git.status();
     console.log("status: ", status)
 
@@ -100,7 +142,7 @@ if (fs.existsSync(dirPath)) {
         .then(isRepo => {
             console.log('isrepo: ', isRepo);
             console.log("status: ", git.status());
-        }).then(makeFile())
+        }).then(updateFile())
         .then(gitPushSeq())
 } else {
     initialiseRepo().then(
@@ -111,7 +153,7 @@ if (fs.existsSync(dirPath)) {
 
             const status = git.status();
             console.log("status: ", status)
-            makeFile();
+            updateFile();
             gitPushSeq();
         },
         (failed) => {
