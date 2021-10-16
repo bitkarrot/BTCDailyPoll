@@ -2,17 +2,27 @@ const shellJs = require('shelljs')
 const fs = require('fs')
 const path = require('path');
 const axios = require('axios')
+require('dotenv').config();
 const sleep = (waitTimeInMs) => new Promise(resolve => setTimeout(resolve, waitTimeInMs));
+
+const fileToWrite = 'new_file'
 
 const repo_name = '/updategit'
 const USER = 'bitkarrot';
-const PASS = process.env.PASS
+const PASS = process.env.GITPASS
+    //console.log('PASS TOKEN: ', process.env.GITPASS)
 const REPO = 'github.com/bitkarrot' + repo_name;
 
 const dirPath = path.join(__dirname, repo_name);
 console.log("directory: ", dirPath)
+
 const git = require('simple-git')();
 const remote = `https://${USER}:${PASS}@${REPO}`;
+
+git.addConfig('user.email', 'bitkarrot@bitcoin.org.hk');
+git.addConfig('user.name', 'Bitkarrot');
+git.addRemote('origin', remote);
+
 
 async function BTCDaily() {
     // get btc/usd and btc/hkd daily rate
@@ -34,57 +44,59 @@ async function BTCDaily() {
     console.log(full_url)
 
     console.log("running axios")
+    let row = {}
+
     await axios.get(full_url).then(
-        async function(response) {
-            const data = await response.data;
-            // console.log('getting data', data)
-            const btcusd = data['market_data']['current_price']['usd']
-            const btchkd = data['market_data']['current_price']['hkd']
-            const satsrate = 100000000
-            const sathkd = parseInt(satsrate / btchkd)
-            const usdsat = parseInt(satsrate / btcusd)
+            async function(response) {
+                const data = await response.data;
+                // console.log('getting data', data)
+                const btcusd = data['market_data']['current_price']['usd']
+                const btchkd = data['market_data']['current_price']['hkd']
+                const satsrate = 100000000
+                const sathkd = parseInt(satsrate / btchkd)
+                const usdsat = parseInt(satsrate / btcusd)
 
-            const row = {
-                btcusd_rate: parseInt(btcusd),
-                date: dbdate,
-                usdsat_rate: usdsat,
-                sathkd_rate: sathkd,
-                btchkd_rate: parseFloat(btchkd).toFixed(2),
-            }
-            return row
-        })
+                row = {
+                    btcusd_rate: parseInt(btcusd),
+                    date: dbdate,
+                    usdsat_rate: usdsat,
+                    sathkd_rate: sathkd,
+                    btchkd_rate: parseFloat(btchkd).toFixed(2),
+                }
+            })
+        //console.log("btc row: ", row)
+    return row
 }
-
 
 // replace this function with BTCDaily()
 async function updateFile() {
     console.log("dirPath ", dirPath)
-        // check if directory exists
-    fs.access(dirPath, (err) => {
+    fs.access(dirPath, (err) => { // check if directory exists
         console.log(`Directory ${err ? 'does not exist' : 'exists'}`);
     });
 
     if (fs.existsSync(dirPath)) {
         shellJs.cd(dirPath);
-        shellJs.touch('./new_file')
-        shellJs.cat('./new_file')
+        const row = await BTCDaily()
+        console.log("new row: ", row, "length: ", Object.keys(row).length)
 
-        const now_date = "\n" + new Date().toLocaleString()
-        const row = BTCDaily()
-        console.log("new row: ", row)
-
-        await fs.appendFile('./new_file', now_date, function(err) {
-            if (err) {
-                console.log("error writing to file",
-                    err)
-            } else {
-                console.log("append to file")
-            }
-        })
-        console.log(shellJs.ls())
-        console.log('current directory: ', __dirname);
+        if (Object.keys(row).length > 0) {
+            let new_row = JSON.stringify(row) + "\n"
+            console.log('new_row string: ', new_row)
+            await fs.appendFile('./' + fileToWrite, new_row, function(err) {
+                if (err) {
+                    console.log("error writing to file",
+                        err)
+                } else {
+                    console.log("append to file")
+                }
+            })
+        }
+        gitPushSeq()
+        return true
     } else {
         console.log("Repo does not exist! ")
+        return false
     }
 }
 
@@ -102,19 +114,20 @@ async function gitPushSeq() {
     await git.add('.')
         .then(
             (addSuccess) => {
-                console.log(addSuccess);
+                console.log("Add Success: ", addSuccess);
             }, (failedAdd) => {
                 console.log('adding files failed');
             });
 
     const d = new Date().toUTCString()
     const msg = 'Intial commit by simplegit: ' + d
+    console.log("commit message", msg)
 
     // Commit files as Initial Commit
     await git.commit(msg)
         .then(
             (successCommit) => {
-                console.log(successCommit);
+                console.log("Commit success", successCommit);
             }, (failed) => {
                 console.log('failed commmit');
             });
@@ -122,16 +135,10 @@ async function gitPushSeq() {
     // Finally push to online repository
     await git.push('origin', 'master')
         .then((success) => {
-            console.log('repo successfully pushed');
+            console.log('repo successfully pushed', success);
         }, (failed) => {
             console.log('repo push failed');
         });
-
-    const status = await git.status();
-    console.log("status: ", status)
-
-    const log = await git.log();
-    console.log("log: ", log)
 }
 
 // start
@@ -142,19 +149,19 @@ if (fs.existsSync(dirPath)) {
         .then(isRepo => {
             console.log('isrepo: ', isRepo);
             console.log("status: ", git.status());
-        }).then(updateFile())
-        .then(gitPushSeq())
+        }).then(() => {
+            const result = updateFile()
+            if (result) {
+                console.log("update file is good: ", result)
+            } else { console.log(" nothing fetched, don't push") }
+        })
 } else {
     initialiseRepo().then(
         (success) => {
             console.log("successfullly created repo:", success);
             git.addRemote('origin', remote);
             console.log("change dir path: ", git.cwd(dirPath))
-
-            const status = git.status();
-            console.log("status: ", status)
             updateFile();
-            gitPushSeq();
         },
         (failed) => {
             console.log('post initialize repo: failed', failed);
