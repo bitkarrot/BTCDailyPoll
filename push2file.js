@@ -3,7 +3,8 @@ const shellJs = require('shelljs')
 const path = require('path');
 const fs = require('fs')
 
-// get btc/usd and btc/hkd daily rate
+// get btc/usd and btc/hkd daily rate update a file with new entry
+
 let url = "https://api.coingecko.com/api/v3/coins/bitcoin/history?localization=false&date="
     //console.log(url)
 
@@ -36,7 +37,7 @@ async function BTCDaily() {
     const newdate = day + "-" + month + "-" + year
     console.log("Date: ", newdate)
 
-    // format is YYYY-MM-DD
+    // default date format is YYYY-MM-DD
     const dbdate = year + "-" + month + "-" + day
     console.log("Date for DB: ", dbdate)
 

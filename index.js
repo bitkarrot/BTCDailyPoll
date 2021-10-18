@@ -8,7 +8,7 @@ require('dotenv').config();
 // no cron jobs allowed on vercel
 
 const fileToWrite = 'output' // rename to hkd_historical
-const fileToRead = 'new_file' //  temp filename: new_hkd
+const fileToRead = 'new_file' //  temp filename: new_hkd_historical
 const repo_name = '/updategit' // change to sathkd-vercel
 
 const USER = 'bitkarrot';
