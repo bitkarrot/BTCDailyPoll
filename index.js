@@ -4,9 +4,11 @@ const path = require('path');
 const axios = require('axios')
 require('dotenv').config();
 
+// quick and dirty script to update satshkd repo, 
+// no cron jobs allowed on vercel
+
 const fileToWrite = 'output' // rename to hkd_historical
 const fileToRead = 'new_file' //  temp filename: new_hkd
-
 const repo_name = '/updategit' // change to sathkd-vercel
 
 const USER = 'bitkarrot';
@@ -25,8 +27,8 @@ git.addConfig('user.name', 'Bitkarrot');
 git.addRemote('origin', remote);
 
 
+// get btc/usd and btc/hkd daily rate
 async function BTCDaily() {
-    // get btc/usd and btc/hkd daily rate
     let url = "https://api.coingecko.com/api/v3/coins/bitcoin/history?localization=false&date="
 
     const today = new Date()
@@ -69,7 +71,7 @@ async function BTCDaily() {
     return row
 }
 
-// replace this function with BTCDaily()
+// update file in the target github repo
 async function updateFile() {
     console.log("dirPath ", dirPath)
     fs.access(dirPath, (err) => { // check if directory exists
@@ -106,6 +108,7 @@ async function updateFile() {
     }
 }
 
+// clone the target github repo
 async function initialiseRepo() {
     const res = await git.silent(true)
         .clone(remote)
@@ -147,7 +150,10 @@ async function gitPushSeq() {
         });
 }
 
-// start
+// start here
+// if repo exists, update the daily rates file
+// else close the repo and update the daily rates file
+
 if (fs.existsSync(dirPath)) {
     shellJs.cd(dirPath);
     console.log("change dir path: ", git.cwd(dirPath))

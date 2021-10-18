@@ -1,5 +1,4 @@
-poll for BTC/USD and BTC/HKD daily price
-write to supabase with sats equivalent
+simple poll for BTC/USD and BTC/HKD daily price from coingecko
 
-
-https://vercel.com/docs/concepts/solutions/cron-jobs
+> script write to supabase with sats equivalent (use as cronjob)
+> update sathkd-vercel repo hkd_historical (use as cronjob)
