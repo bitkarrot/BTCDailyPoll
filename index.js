@@ -3,16 +3,15 @@ const fs = require('fs')
 const path = require('path');
 const axios = require('axios')
 require('dotenv').config();
-const sleep = (waitTimeInMs) => new Promise(resolve => setTimeout(resolve, waitTimeInMs));
 
 const fileToWrite = 'new_file'
-
 const repo_name = '/updategit'
+
 const USER = 'bitkarrot';
 const PASS = process.env.GITPASS
     //console.log('PASS TOKEN: ', process.env.GITPASS)
-const REPO = 'github.com/bitkarrot' + repo_name;
 
+const REPO = 'github.com/bitkarrot' + repo_name;
 const dirPath = path.join(__dirname, repo_name);
 console.log("directory: ", dirPath)
 
@@ -83,6 +82,8 @@ async function updateFile() {
         if (Object.keys(row).length > 0) {
             let new_row = JSON.stringify(row) + "\n"
             console.log('new_row string: ', new_row)
+
+            // rewrite to pull JSON, append and rewrite
             await fs.appendFile('./' + fileToWrite, new_row, function(err) {
                 if (err) {
                     console.log("error writing to file",
