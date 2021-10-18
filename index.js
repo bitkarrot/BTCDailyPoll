@@ -4,8 +4,10 @@ const path = require('path');
 const axios = require('axios')
 require('dotenv').config();
 
-const fileToWrite = 'new_file'
-const repo_name = '/updategit'
+const fileToWrite = 'output' // rename to hkd_historical
+const fileToRead = 'new_file' //  temp filename: new_hkd
+
+const repo_name = '/updategit' // change to sathkd-vercel
 
 const USER = 'bitkarrot';
 const PASS = process.env.GITPASS
@@ -80,11 +82,14 @@ async function updateFile() {
         console.log("new row: ", row, "length: ", Object.keys(row).length)
 
         if (Object.keys(row).length > 0) {
-            let new_row = JSON.stringify(row) + "\n"
-            console.log('new_row string: ', new_row)
+            const original = fs.readFileSync("./" + fileToRead, { encoding: 'utf8' })
+            let orig = JSON.parse(original)
 
-            // rewrite to pull JSON, append and rewrite
-            await fs.appendFile('./' + fileToWrite, new_row, function(err) {
+            console.log('new_row string: ', row)
+            orig.push(row)
+            const new_content = JSON.stringify(orig)
+
+            await fs.writeFileSync('./' + fileToWrite, new_content, function(err) {
                 if (err) {
                     console.log("error writing to file",
                         err)
