@@ -137,12 +137,13 @@ async function initialiseRepo() {
 async function gitPushSeq() {
     // Add file for commit and push
     await git.add('.')
-        .then(
-            (addSuccess) => {
-                //  console.log("Add Success: ", addSuccess);
-            }, (failedAdd) => {
-                //  console.log('adding files failed');
-            });
+        /*        .then(
+                    (addSuccess) => {
+                        //  console.log("Add Success: ", addSuccess);
+                    }, (failedAdd) => {
+                        //  console.log('adding files failed');
+                    });
+        */
 
     const d = new Date().toUTCString()
     const msg = 'simplegit: ' + d
@@ -150,20 +151,23 @@ async function gitPushSeq() {
 
     // Commit files as Initial Commit
     await git.commit(msg)
-        .then(
-            (successCommit) => {
-                // console.log("Commit success", successCommit);
-            }, (failed) => {
-                // console.log('failed commmit');
-            });
+        /*        .then(
+                    (successCommit) => {
+                        // console.log("Commit success", successCommit);
+                    }, (failed) => {
+                        // console.log('failed commmit');
+                    });
+                    */
 
     // Finally push to online repository
     await git.push('origin', 'master')
-        .then((success) => {
-            // console.log('repo successfully pushed', success);
-        }, (failed) => {
-            //  console.log('repo push failed');
-        });
+        /*
+            .then((success) => {
+                // console.log('repo successfully pushed', success);
+            }, (failed) => {
+                //  console.log('repo push failed');
+            });
+            */
 }
 
 // start here
@@ -174,29 +178,31 @@ async function main() {
 
     if (fs.existsSync(dirPath)) {
         shellJs.cd(dirPath);
-        //    console.log("change dir path: ", git.cwd(dirPath))
+        console.log("change dir path: ", git.cwd(dirPath))
         git.checkIsRepo()
-            .then(isRepo => {
-                //console.log('isrepo: ', isRepo);
-                //            console.log("status: ", git.status());
-            }).then(() => {
-                const result = updateFile()
-                    //            if (result) {
-                    //                console.log("update file is good: ", result)
-                    //            } else { console.log(" nothing fetched, don't push") }
-            })
+            //            .then(isRepo => {
+            //console.log('isrepo: ', isRepo);
+            //            console.log("status: ", git.status());
+            //})
+            //            .then(() => {
+        const result = updateFile()
+            //            if (result) {
+            //                console.log("update file is good: ", result)
+            //            } else { console.log(" nothing fetched, don't push") }
+            //          })
     } else {
-        await initialiseRepo().then(
-            (success) => {
-                //console.log("successfullly created repo:", success);
-                //git.addRemote('origin', remote);
-                //console.log("change dir path: ", git.cwd(dirPath))
-                const result = updateFile();
-            },
-            (failed) => {
-                return false;
-                //console.log('post initialize repo: failed', failed);
-            })
+        await initialiseRepo()
+            //.then(
+            //   (success) => {
+            //console.log("successfullly created repo:", success);
+            //git.addRemote('origin', remote);
+            //console.log("change dir path: ", git.cwd(dirPath))
+        const result = updateFile();
+        // },
+        //(failed) => {
+        //    return false;
+        //console.log('post initialize repo: failed', failed);
+        //})
     }
 }
 
