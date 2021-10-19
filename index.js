@@ -32,7 +32,7 @@ const remote = `https://${USER}:${PASS}@${REPO}`;
 
 git.addConfig('user.email', 'bitkarrot@bitcoin.org.hk');
 git.addConfig('user.name', 'Bitkarrot');
-git.addRemote('origin', remote);
+//git.addRemote('origin', remote);
 
 
 // get btc/usd and btc/hkd daily rate
@@ -187,7 +187,7 @@ if (fs.existsSync(dirPath)) {
     initialiseRepo().then(
         (success) => {
             //console.log("successfullly created repo:", success);
-            git.addRemote('origin', remote);
+            //git.addRemote('origin', remote);
             //console.log("change dir path: ", git.cwd(dirPath))
             updateFile();
         },
