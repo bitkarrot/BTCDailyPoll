@@ -1,8 +1,12 @@
+const debug = require('debug');
+
 const shellJs = require('shelljs')
 const fs = require('fs')
 const path = require('path');
 const axios = require('axios')
 require('dotenv').config();
+
+debug.enable('simple-git,simple-git:*');
 
 // quick and dirty script to update satshkd repo on daily
 // basis via pipedream cron job. email to owner to notify
