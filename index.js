@@ -82,7 +82,7 @@ async function BTCDaily() {
 // update file in the target github repo
 async function updateFile() {
     // console.log("dirPath ", dirPath)
-    fs.access(dirPath, (err) => { // check if directory exists
+    await fs.access(dirPath, (err) => { // check if directory exists
         // console.log(`Directory ${err ? 'does not exist' : 'exists'}`);
     });
 
@@ -92,7 +92,7 @@ async function updateFile() {
             // console.log("new row: ", row, "length: ", Object.keys(row).length)
 
         if (Object.keys(row).length > 0) {
-            const original = fs.readFileSync("./" + fileToRead, { encoding: 'utf8' })
+            const original = await fs.readFileSync("./" + fileToRead, { encoding: 'utf8' })
             let orig = JSON.parse(original)
 
             // console.log('new_row string: ', row)
@@ -110,7 +110,7 @@ async function updateFile() {
             })
             */
         }
-        gitPushSeq()
+        await gitPushSeq()
         return true
     } else {
         // console.log("Repo does not exist! ")
@@ -170,29 +170,34 @@ async function gitPushSeq() {
 // if repo exists, update the daily rates file
 // else close the repo and update the daily rates file
 
-if (fs.existsSync(dirPath)) {
-    shellJs.cd(dirPath);
-    //    console.log("change dir path: ", git.cwd(dirPath))
-    git.checkIsRepo()
-        .then(isRepo => {
-            //console.log('isrepo: ', isRepo);
-            //            console.log("status: ", git.status());
-        }).then(() => {
-            const result = updateFile()
-                //            if (result) {
-                //                console.log("update file is good: ", result)
-                //            } else { console.log(" nothing fetched, don't push") }
-        })
-} else {
-    initialiseRepo().then(
-        (success) => {
-            //console.log("successfullly created repo:", success);
-            //git.addRemote('origin', remote);
-            //console.log("change dir path: ", git.cwd(dirPath))
-            updateFile();
-        },
-        (failed) => {
-            return false;
-            //console.log('post initialize repo: failed', failed);
-        })
+async function main() {
+
+    if (fs.existsSync(dirPath)) {
+        shellJs.cd(dirPath);
+        //    console.log("change dir path: ", git.cwd(dirPath))
+        git.checkIsRepo()
+            .then(isRepo => {
+                //console.log('isrepo: ', isRepo);
+                //            console.log("status: ", git.status());
+            }).then(() => {
+                const result = updateFile()
+                    //            if (result) {
+                    //                console.log("update file is good: ", result)
+                    //            } else { console.log(" nothing fetched, don't push") }
+            })
+    } else {
+        await initialiseRepo().then(
+            (success) => {
+                //console.log("successfullly created repo:", success);
+                //git.addRemote('origin', remote);
+                //console.log("change dir path: ", git.cwd(dirPath))
+                const result = updateFile();
+            },
+            (failed) => {
+                return false;
+                //console.log('post initialize repo: failed', failed);
+            })
+    }
 }
+
+const res = main()
