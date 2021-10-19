@@ -7,6 +7,9 @@ require('dotenv').config();
 // quick and dirty script to update satshkd repo on daily
 // basis via pipedream cron job. email to owner to notify
 // no cron jobs allowed on vercel
+//
+// NOTE: if the target output file in the target repo is the same
+// running this update will not affect it. 
 
 const fileToWrite = 'output' // rename to hkd_historical
 const fileToRead = 'new_file' //  temp filename: new_hkd_historical
