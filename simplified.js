@@ -23,9 +23,6 @@ const dirPath = path.join("/tmp", repo_name);
 const git = require('simple-git')();
 const remote = `https://${USER}:${PASS}@${REPO}`;
 
-git.addConfig('user.email', 'bitkarrot@bitcoin.org.hk');
-git.addConfig('user.name', 'Bitkarrot');
-
 
 // get btc/usd and btc/hkd daily rate
 async function BTCDaily() {
@@ -81,13 +78,16 @@ async function updateFile() {
             await fs.writeFileSync('./' + fileToWrite, new_content);
         }
         await gitPushSeq()
-        return true
+        return row
     } else {
         return false
     }
 }
 
 async function gitPushSeq() {
+    git.addConfig('user.email', 'bitkarrot@bitcoin.org.hk');
+    git.addConfig('user.name', 'Bitkarrot');
+
     const d = new Date().toUTCString()
     const msg = 'simplegit: ' + d
     await git.add('.')
@@ -97,15 +97,29 @@ async function gitPushSeq() {
 
 // start here
 async function main() {
+    let result = ''
     if (fs.existsSync(dirPath)) {
         shellJs.cd(dirPath);
         git.checkIsRepo()
-        const result = updateFile()
+        result = updateFile()
     } else {
-        //        const res = await git.silent(true).clone(remote)
         const rest = await git.clone(remote, dirPath)
-        const result = updateFile();
+        result = updateFile();
     }
+
+    // get last git log
+    shellJs.cd(dirPath)
+    const goto = 'cd ' + dirPath
+    let cmd = goto + '; git log -1'
+    let lastupdate = shellJs.exec(cmd).stdout
+    lastupdate += result
+    return lastupdate
 }
 
 const res = main()
+    // console.log('Result from main() : ', res)
+
+
+// remove directory 
+// console.log('Removing repo : ', dirPath)
+// shellJs.rm('-rf', dirPath)
