@@ -3,17 +3,13 @@ const debug = require('debug');
 const shellJs = require('shelljs')
 const fs = require('fs')
 const path = require('path');
-const axios = require('axios')
+const axios = require('axios');
 require('dotenv').config();
 
 debug.enable('simple-git,simple-git:*');
 
-// quick and dirty script to update satshkd repo on daily
-// basis via pipedream cron job. email to owner to notify
-// no cron jobs allowed on vercel
-//
-// NOTE: if the target output file in the target repo is the same
-// running this update will not affect it. 
+// simplified version of index.js
+// no error checking, use at your own risk. 
 
 const fileToWrite = 'output' // rename to hkd_historical
 const fileToRead = 'new_file' //  temp filename: new_hkd_historical
@@ -21,10 +17,8 @@ const repo_name = '/updategit' // change to sathkd-vercel
 
 const USER = 'bitkarrot';
 const PASS = process.env.GITPASS
-    //console.log('PASS TOKEN: ', process.env.GITPASS)
-
 const REPO = 'github.com/bitkarrot' + repo_name;
-const dirPath = path.join(__dirname, repo_name);
+const dirPath = path.join("/tmp", repo_name);
 
 const git = require('simple-git')();
 const remote = `https://${USER}:${PASS}@${REPO}`;
@@ -109,7 +103,7 @@ async function main() {
         const result = updateFile()
     } else {
         //        const res = await git.silent(true).clone(remote)
-        const rest = await git.clone(remote)
+        const rest = await git.clone(remote, dirPath)
         const result = updateFile();
     }
 }

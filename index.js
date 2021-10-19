@@ -24,7 +24,11 @@ const PASS = process.env.GITPASS
     //console.log('PASS TOKEN: ', process.env.GITPASS)
 
 const REPO = 'github.com/bitkarrot' + repo_name;
-const dirPath = path.join(__dirname, repo_name);
+
+// clone repo into /tmp
+const dirPath = path.join("/tmp", repo_name);
+
+//const dirPath = path.join(__dirname, repo_name);
 //console.log("directory: ", dirPath)
 
 const git = require('simple-git')();
