@@ -11,8 +11,8 @@ debug.enable('simple-git,simple-git:*');
 // simplified version of index.js
 // no error checking, use at your own risk. 
 
-const fileToWrite = 'output' // rename to hkd_historical
-const fileToRead = 'new_file' //  temp filename: new_hkd_historical
+const fileToWrite = 'new_hkd_historical' // rename to hkd_historical
+const fileToRead = 'hkd_historical' //  filename: hkd_historical
 const repo_name = '/updategit' // change to sathkd-vercel
 
 const USER = 'bitkarrot';
