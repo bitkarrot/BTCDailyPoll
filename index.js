@@ -130,7 +130,7 @@ async function gitPushSeq() {
             });
 
     const d = new Date().toUTCString()
-    const msg = 'Intial commit by simplegit: ' + d
+    const msg = 'simplegit: ' + d
     console.log("commit message", msg)
 
     // Commit files as Initial Commit
