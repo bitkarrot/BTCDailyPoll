@@ -96,7 +96,7 @@ async function gitPushSeq() {
     git.cwd(dirPath)
     console.log("status: ", git.status());
 
-    await git.add('public/new_hkd_historical')
+    await git.add('public/hkd_historical')
         .then(
             (addSuccess) => {
                 console.log("Add Success: ", addSuccess);
