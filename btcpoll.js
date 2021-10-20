@@ -6,7 +6,7 @@ const path = require('path');
 const axios = require('axios');
 require('dotenv').config();
 
-//debug.enable('simple-git,simple-git:*');
+debug.enable('simple-git,simple-git:*');
 
 // simplified version of index.js
 // no error checking, use at your own risk. 
