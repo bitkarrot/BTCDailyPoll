@@ -147,7 +147,7 @@ async function main() {
     }
 }
 
-cron.schedule('* * * * *', async function() {
+cron.schedule('0 0 * * *', async function() { //At 00:00.” 
     const res = main()
     console.log('Result from main() : ', res)
 })
