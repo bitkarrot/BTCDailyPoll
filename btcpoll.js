@@ -6,19 +6,22 @@ const path = require('path');
 const axios = require('axios');
 require('dotenv').config();
 
-debug.enable('simple-git,simple-git:*');
+//debug.enable('simple-git,simple-git:*');
 
 // simplified version of index.js
 // no error checking, use at your own risk. 
 
-const fileToWrite = 'new_hkd_historical' // rename to hkd_historical
-const fileToRead = 'hkd_historical' //  filename: hkd_historical
-const repo_name = '/updategit' // change to sathkd-vercel
+const fileToWrite = "public/new_hkd_historical"
+const fileToRead = "public/hkd_historical"
+    //const repo_name = '/updategit' // change to sathkd-vercel
+const repo_name = '/satshkd-vercel'
 
 const USER = 'bitkarrot';
 const PASS = process.env.GITPASS
 const REPO = 'github.com/bitkarrot' + repo_name;
-const dirPath = path.join("/tmp", repo_name);
+const dirPath = path.join("./", repo_name);
+
+console.log("dirPath: ", dirPath)
 
 const git = require('simple-git')();
 const remote = `https://${USER}:${PASS}@${REPO}`;
@@ -61,27 +64,26 @@ async function BTCDaily() {
 
 // update file in the target github repo
 async function updateFile() {
-    await fs.access(dirPath, (err) => { // check if directory exists
-        return false
-    });
+    console.log(shellJs.ls())
+        //   shellJs.cd(dirPath);
+    git.cwd(dirPath)
+    const row = await BTCDaily()
 
-    if (fs.existsSync(dirPath)) {
-        shellJs.cd(dirPath);
-        git.cwd(dirPath)
-        const row = await BTCDaily()
+    if (Object.keys(row).length > 0) {
 
-        if (Object.keys(row).length > 0) {
-            const original = await fs.readFileSync("./" + fileToRead, { encoding: 'utf8' })
-            let orig = JSON.parse(original)
-            orig.push(row)
-            const new_content = JSON.stringify(orig)
-            await fs.writeFileSync('./' + fileToWrite, new_content);
-        }
-        await gitPushSeq()
-        return row
-    } else {
-        return false
+        console.log("dirpath", dirPath)
+        console.log("direname", __dirname)
+
+        const original = await fs.readFileSync(fileToRead)
+        let orig = JSON.parse(original)
+        console.log(orig[0])
+        orig.push(row)
+        console.log(orig[orig.length - 1])
+        const new_content = JSON.stringify(orig)
+
+        await fs.writeFileSync(fileToWrite, new_content);
     }
+    await gitPushSeq()
 }
 
 async function gitPushSeq() {
@@ -99,21 +101,27 @@ async function gitPushSeq() {
 async function main() {
     let result = ''
     if (fs.existsSync(dirPath)) {
+        console.log("check if file exists", dirPath)
         shellJs.cd(dirPath);
-        git.checkIsRepo()
+        console.log(shellJs.ls())
+        const status = await git.checkIsRepo()
+        console.log("is repo? ", status)
         result = updateFile()
     } else {
         const rest = await git.clone(remote, dirPath)
+        console.log("is repo cloned? ", rest)
+        shellJs.cd(dirPath);
+        console.log(shellJs.ls())
         result = updateFile();
     }
 
     // get last git log
-    shellJs.cd(dirPath)
-    const goto = 'cd ' + dirPath
-    let cmd = goto + '; git log -1'
-    let lastupdate = shellJs.exec(cmd).stdout
-    lastupdate += result
-    return lastupdate
+    //shellJs.cd(dirPath)
+    //    const goto = 'cd ' + dirPath
+    //   let cmd = goto + '; git log -1'
+    //  let lastupdate = shellJs.exec(cmd).stdout
+    //  lastupdate += result
+    // return lastupdate
 }
 
 const res = main()
