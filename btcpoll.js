@@ -131,21 +131,20 @@ async function gitPushSeq() {
 // start here
 async function main() {
     let result = ''
-        /*    if (fs.existsSync(dirPath)) {
-                console.log("check if file exists", dirPath)
-                shellJs.cd(dirPath);
-                console.log(shellJs.ls())
-                const status = await git.checkIsRepo()
-                console.log("is repo? ", status)
-                result = updateFile()
-            } else {
-                */
-    const rest = await git.clone(remote, dirPath)
-    console.log("is repo cloned? ", rest)
-    shellJs.cd(dirPath);
-    console.log(shellJs.ls())
-    result = updateFile();
-    // }
+    if (fs.existsSync(dirPath)) {
+        console.log("check if file exists", dirPath)
+        shellJs.cd(dirPath);
+        console.log(shellJs.ls())
+        const status = await git.checkIsRepo()
+        console.log("is repo? ", status)
+        result = updateFile()
+    } else {
+        const rest = await git.clone(remote, dirPath)
+        console.log("is repo cloned? ", rest)
+        shellJs.cd(dirPath);
+        console.log(shellJs.ls())
+        result = updateFile();
+    }
 }
 
 const res = main()
