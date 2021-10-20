@@ -82,8 +82,8 @@ async function updateFile() {
         const new_content = JSON.stringify(orig)
 
         await fs.writeFileSync(fileToWrite, new_content);
+        await gitPushSeq()
     }
-    await gitPushSeq()
 }
 
 async function gitPushSeq() {
