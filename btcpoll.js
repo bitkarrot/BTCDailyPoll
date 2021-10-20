@@ -6,7 +6,7 @@ const path = require('path');
 const axios = require('axios');
 require('dotenv').config();
 
-debug.enable('simple-git,simple-git:*');
+//debug.enable('simple-git,simple-git:*');
 
 // simplified version of index.js
 // no error checking, use at your own risk. 
@@ -91,24 +91,11 @@ async function updateFile() {
     }
 }
 
-/*
-async function gitPushSeq() {
-    git.addConfig('user.email', 'bitkarrot@bitcoin.org.hk');
-    git.addConfig('user.name', 'Bitkarrot');
-
-    const d = new Date().toUTCString()
-    const msg = 'simplegit: ' + d
-    await git.add('.')
-    await git.commit(msg)
-    await git.push('origin', 'master')
-}
-*/
-
 async function gitPushSeq() {
     // Add file for commit and push
     console.log("status: ", git.status());
 
-    await git.add('*')
+    await git.add('./public/new_hkd_historical')
         .then(
             (addSuccess) => {
                 console.log("Add Success: ", addSuccess);
@@ -143,28 +130,21 @@ async function gitPushSeq() {
 // start here
 async function main() {
     let result = ''
-    if (fs.existsSync(dirPath)) {
-        console.log("check if file exists", dirPath)
-        shellJs.cd(dirPath);
-        console.log(shellJs.ls())
-        const status = await git.checkIsRepo()
-        console.log("is repo? ", status)
-        result = updateFile()
-    } else {
-        const rest = await git.clone(remote, dirPath)
-        console.log("is repo cloned? ", rest)
-        shellJs.cd(dirPath);
-        console.log(shellJs.ls())
-        result = updateFile();
-    }
-
-    // get last git log
-    //shellJs.cd(dirPath)
-    //    const goto = 'cd ' + dirPath
-    //   let cmd = goto + '; git log -1'
-    //  let lastupdate = shellJs.exec(cmd).stdout
-    //  lastupdate += result
-    // return lastupdate
+        /*    if (fs.existsSync(dirPath)) {
+                console.log("check if file exists", dirPath)
+                shellJs.cd(dirPath);
+                console.log(shellJs.ls())
+                const status = await git.checkIsRepo()
+                console.log("is repo? ", status)
+                result = updateFile()
+            } else {
+                */
+    const rest = await git.clone(remote, dirPath)
+    console.log("is repo cloned? ", rest)
+    shellJs.cd(dirPath);
+    console.log(shellJs.ls())
+    result = updateFile();
+    // }
 }
 
 const res = main()
