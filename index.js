@@ -21,15 +21,15 @@ const repo_name = '/updategit' // change to sathkd-vercel
 
 const USER = 'bitkarrot';
 const PASS = process.env.GITPASS
-    //console.log('PASS TOKEN: ', process.env.GITPASS)
+console.log('PASS TOKEN: ', process.env.GITPASS)
 
 const REPO = 'github.com/bitkarrot' + repo_name;
 
 // clone repo into /tmp
-const dirPath = path.join("/tmp", repo_name);
+//const dirPath = path.join("/tmp", repo_name);
 
-//const dirPath = path.join(__dirname, repo_name);
-//console.log("directory: ", dirPath)
+const dirPath = path.join(__dirname, repo_name);
+console.log("directory: ", dirPath)
 
 const git = require('simple-git')();
 const remote = `https://${USER}:${PASS}@${REPO}`;

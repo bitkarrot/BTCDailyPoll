@@ -18,13 +18,18 @@ const repo_name = '/satshkd-vercel'
 
 const USER = 'bitkarrot';
 const PASS = process.env.GITPASS
+console.log('PASS TOKEN: ', process.env.GITPASS)
+
 const REPO = 'github.com/bitkarrot' + repo_name;
-const dirPath = path.join("./", repo_name);
+const dirPath = path.join(__dirname, repo_name);
 
 console.log("dirPath: ", dirPath)
 
 const git = require('simple-git')();
 const remote = `https://${USER}:${PASS}@${REPO}`;
+
+git.addConfig('user.email', 'bitkarrot@bitcoin.org.hk');
+git.addConfig('user.name', 'Bitkarrot');
 
 
 // get btc/usd and btc/hkd daily rate
@@ -86,6 +91,7 @@ async function updateFile() {
     }
 }
 
+/*
 async function gitPushSeq() {
     git.addConfig('user.email', 'bitkarrot@bitcoin.org.hk');
     git.addConfig('user.name', 'Bitkarrot');
@@ -96,6 +102,43 @@ async function gitPushSeq() {
     await git.commit(msg)
     await git.push('origin', 'master')
 }
+*/
+
+async function gitPushSeq() {
+    // Add file for commit and push
+    console.log("status: ", git.status());
+
+    await git.add('*')
+        .then(
+            (addSuccess) => {
+                console.log("Add Success: ", addSuccess);
+            }, (failedAdd) => {
+                console.log('adding files failed');
+            });
+
+
+    const d = new Date().toUTCString()
+    const msg = 'simplegit: ' + d
+    console.log("commit message", msg)
+
+    // Commit files as Initial Commit
+    await git.commit(msg)
+        .then(
+            (successCommit) => {
+                console.log("Commit success", successCommit);
+            }, (failed) => {
+                console.log('failed commmit');
+            });
+
+    // Finally push to online repository
+    await git.push('origin', 'master')
+        .then((success) => {
+            console.log('repo successfully pushed', success);
+        }, (failed) => {
+            console.log('repo push failed');
+        });
+}
+
 
 // start here
 async function main() {
