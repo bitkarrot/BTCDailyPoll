@@ -93,9 +93,10 @@ async function updateFile() {
 
 async function gitPushSeq() {
     // Add file for commit and push
+    git.cwd(dirPath)
     console.log("status: ", git.status());
 
-    await git.add('./public/new_hkd_historical')
+    await git.add('public/new_hkd_historical')
         .then(
             (addSuccess) => {
                 console.log("Add Success: ", addSuccess);
@@ -118,11 +119,11 @@ async function gitPushSeq() {
             });
 
     // Finally push to online repository
-    await git.push('origin', 'master')
+    await git.push('origin', 'main') // make sure correct branch!
         .then((success) => {
             console.log('repo successfully pushed', success);
         }, (failed) => {
-            console.log('repo push failed');
+            console.log('repo push failed', failed);
         });
 }
 
