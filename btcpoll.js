@@ -1,5 +1,6 @@
 const debug = require('debug');
 
+const cron = require('node-cron');
 const shellJs = require('shelljs')
 const fs = require('fs')
 const path = require('path');
@@ -7,7 +8,6 @@ const axios = require('axios');
 require('dotenv').config();
 
 //debug.enable('simple-git,simple-git:*');
-
 // simplified version of index.js
 // no error checking, use at your own risk. 
 
@@ -147,8 +147,10 @@ async function main() {
     }
 }
 
-const res = main()
-    // console.log('Result from main() : ', res)
+cron.schedule('* * * * *', async function() {
+    const res = main()
+    console.log('Result from main() : ', res)
+})
 
 
 // remove directory 

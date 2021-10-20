@@ -21,6 +21,7 @@
         "axios": "^0.22.0",
         "debug": "^4.3.2",
         "dotenv": "^10.0.0",
+        "node-cron": "^3.0.0",
         "shelljs": "^0.8.4",
         "simple-git": "^2.46.0"
     }
