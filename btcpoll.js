@@ -11,7 +11,7 @@ require('dotenv').config();
 // simplified version of index.js
 // no error checking, use at your own risk. 
 
-const fileToWrite = "public/new_hkd_historical"
+const fileToWrite = "public/hkd_historical"
 const fileToRead = "public/hkd_historical"
     //const repo_name = '/updategit' // change to sathkd-vercel
 const repo_name = '/satshkd-vercel'
