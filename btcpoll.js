@@ -147,10 +147,10 @@ async function main() {
     }
 }
 
-cron.schedule('0 0 * * *', async function() { //At 00:00.” 
-    const res = main()
-    console.log('Result from main() : ', res)
-})
+//cron.schedule('0 0 * * *', async function() { //At 00:00.” 
+const res = main()
+console.log('Result from main() : ', res)
+    //})
 
 
 // remove directory 
