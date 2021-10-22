@@ -131,10 +131,12 @@ async function gitPushSeq() {
 
 // start here
 async function main() {
+    /*
     if (new Date().getHours() !== 0) {
         console.log(`Current hours is ${new Date().getHours()}, not running.`)
         process.exit(0);
     }
+    */
     console.log("starting btcpoll script for satshkd ")
     let result = ''
     if (fs.existsSync(dirPath)) {
