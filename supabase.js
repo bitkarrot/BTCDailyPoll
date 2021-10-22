@@ -1,4 +1,4 @@
-const { createClient } = require('@supabase/supabase-js')
+//const { createClient } = require('@supabase/supabase-js')
 const axios = require('axios')
 const path = require('path');
 
@@ -52,7 +52,7 @@ async function BTCDaily() {
             async function(response) {
 
                 const data = await response.data;
-                // console.log('getting data', data)
+                console.log('getting data', data)
                 const btcusd = data['market_data']['current_price']['usd']
                 const btchkd = data['market_data']['current_price']['hkd']
 

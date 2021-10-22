@@ -50,6 +50,7 @@ async function BTCDaily() {
     await axios.get(full_url).then(
         async function(response) {
             const data = await response.data;
+            console.log("axios data: ", data)
             const btcusd = data['market_data']['current_price']['usd']
             const btchkd = data['market_data']['current_price']['hkd']
             const satsrate = 100000000
@@ -63,6 +64,7 @@ async function BTCDaily() {
                 sathkd_rate: sathkd,
                 btchkd_rate: parseFloat(btchkd).toFixed(2),
             }
+            console.log("row data: ", row)
         })
     return row
 }
@@ -75,7 +77,6 @@ async function updateFile() {
     const row = await BTCDaily()
 
     if (Object.keys(row).length > 0) {
-
         console.log("dirpath", dirPath)
         console.log("direname", __dirname)
 
