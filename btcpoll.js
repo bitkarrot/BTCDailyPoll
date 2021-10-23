@@ -46,6 +46,8 @@ async function BTCDaily() {
     const dbdate = year + "-" + month + "-" + day
     let full_url = url + newdate
     let row = {}
+    console.log("db date: ", dbdate)
+    console.log("new date format:  ", newdate, "\n")
 
     await axios.get(full_url).then(
         async function(response) {
