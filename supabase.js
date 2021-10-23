@@ -29,10 +29,12 @@ const today = date
 
 async function BTCDaily() {
     const today = new Date()
-    console.log(today)
+    console.log("Today UTC: ", today)
+
+    console.log("to locale string: ", today.toLocaleString())
 
     // reverse to DD-MM-YYY
-    const day = today.getDate()
+    const day = today.getDate() // incase of date lag, minus 1
     const month = today.getMonth() + 1
     const year = today.getFullYear()
     const newdate = day + "-" + month + "-" + year
@@ -52,7 +54,7 @@ async function BTCDaily() {
             async function(response) {
 
                 const data = await response.data;
-                console.log('getting data', data)
+                //console.log('getting data', data)
                 const btcusd = data['market_data']['current_price']['usd']
                 const btchkd = data['market_data']['current_price']['hkd']
 

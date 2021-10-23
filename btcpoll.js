@@ -37,7 +37,7 @@ async function BTCDaily() {
     let url = "https://api.coingecko.com/api/v3/coins/bitcoin/history?localization=false&date="
 
     const today = new Date()
-    const day = today.getDate()
+    const day = today.getDate() - 1 // one day earlier, lag in date
     const month = today.getMonth() + 1
     const year = today.getFullYear()
     const newdate = day + "-" + month + "-" + year
