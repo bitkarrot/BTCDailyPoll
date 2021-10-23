@@ -49,6 +49,7 @@ async function BTCDaily() {
 
     await axios.get(full_url).then(
         async function(response) {
+            console.log("full url: ", full_url)
             const data = await response.data;
             console.log("axios data: ", data)
             const btcusd = data['market_data']['current_price']['usd']
