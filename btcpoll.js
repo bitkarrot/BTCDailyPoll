@@ -128,7 +128,7 @@ async function gitPushSeq() {
         .then((success) => {
             console.log('repo successfully pushed', success);
             const subject = "btc rate to sathkd-vercel: " + new Date().toUTCString()
-            emailform.sendEmailData(subject, "simplegit Repo successfully pushed: " + success)
+            emailform.sendEmailData(subject, "simplegit Repo successfully pushed: " + JSON.stringify(success))
         }, (failed) => {
             console.log('repo push failed', failed);
         });
