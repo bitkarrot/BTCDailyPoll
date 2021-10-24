@@ -1,4 +1,5 @@
 const debug = require('debug');
+const emailform = require("./emailform");
 
 const cron = require('node-cron');
 const shellJs = require('shelljs')
@@ -18,7 +19,7 @@ const repo_name = '/satshkd-vercel'
 
 const USER = 'bitkarrot';
 const PASS = process.env.GITPASS
-console.log('PASS TOKEN: ', process.env.GITPASS)
+    // console.log('PASS TOKEN: ', process.env.GITPASS)
 
 const REPO = 'github.com/bitkarrot' + repo_name;
 const dirPath = path.join(__dirname, repo_name);
@@ -53,7 +54,7 @@ async function BTCDaily() {
         async function(response) {
             console.log("full url: ", full_url)
             const data = await response.data;
-            console.log("axios data: ", data)
+            //console.log("axios data: ", data)
             const btcusd = data['market_data']['current_price']['usd']
             const btchkd = data['market_data']['current_price']['hkd']
             const satsrate = 100000000
@@ -74,8 +75,8 @@ async function BTCDaily() {
 
 // update file in the target github repo
 async function updateFile() {
-    console.log(shellJs.ls())
-        //   shellJs.cd(dirPath);
+    // console.log(shellJs.ls())
+    //   shellJs.cd(dirPath);
     git.cwd(dirPath)
     const row = await BTCDaily()
 
@@ -117,7 +118,7 @@ async function gitPushSeq() {
     await git.commit(msg)
         .then(
             (successCommit) => {
-                console.log("Commit success", successCommit);
+                console.log("Commit success: ", successCommit);
             }, (failed) => {
                 console.log('failed commmit');
             });
@@ -126,6 +127,8 @@ async function gitPushSeq() {
     await git.push('origin', 'main') // make sure correct branch!
         .then((success) => {
             console.log('repo successfully pushed', success);
+            const subject = "btc rate to sathkd-vercel: " + new Date().toUTCString()
+            emailform.sendEmailData(subject, "simplegit Repo successfully pushed: " + success)
         }, (failed) => {
             console.log('repo push failed', failed);
         });
