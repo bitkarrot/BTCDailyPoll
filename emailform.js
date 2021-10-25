@@ -13,8 +13,8 @@ module.exports = {
             }
         });
         const mailOptions = {
-            from: 'christina.c@bitcoin.org.hk',
-            to: 'christina.c@bitcoin.org.hk',
+            from: 'bitkarrot@bitcoin.org.hk',
+            to: 'bitkarrot@bitcoin.org.hk',
             subject: subject,
             text: data,
             html: data
