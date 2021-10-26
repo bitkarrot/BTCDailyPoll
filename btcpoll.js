@@ -19,7 +19,7 @@ const repo_name = '/satshkd-vercel'
 
 const USER = 'bitkarrot';
 const PASS = process.env.GITPASS
-    // console.log('PASS TOKEN: ', process.env.GITPASS)
+console.log('PASS TOKEN: ', process.env.GITPASS)
 
 const REPO = 'github.com/bitkarrot' + repo_name;
 const dirPath = path.join(__dirname, repo_name);
@@ -28,6 +28,8 @@ console.log("dirPath: ", dirPath)
 
 const git = require('simple-git')();
 const remote = `https://${USER}:${PASS}@${REPO}`;
+
+console.log('Remote:', remote) 
 
 git.addConfig('user.email', 'bitkarrot@bitcoin.org.hk');
 git.addConfig('user.name', 'Bitkarrot');
