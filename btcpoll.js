@@ -1,5 +1,5 @@
 const debug = require('debug');
-const emailform = require("./emailform");
+//const emailform = require("./emailform");
 
 const cron = require('node-cron');
 const shellJs = require('shelljs')
@@ -127,8 +127,8 @@ async function gitPushSeq() {
     await git.push('origin', 'main') // make sure correct branch!
         .then((success) => {
             console.log('repo successfully pushed', success);
-            const subject = "btc rate to sathkd-vercel: " + new Date().toUTCString()
-            emailform.sendEmailData(subject, "simplegit Repo successfully pushed: " + JSON.stringify(success))
+            //const subject = "btc rate to sathkd-vercel: " + new Date().toUTCString()
+            //emailform.sendEmailData(subject, "simplegit Repo successfully pushed: " + JSON.stringify(success))
         }, (failed) => {
             console.log('repo push failed', failed);
         });
