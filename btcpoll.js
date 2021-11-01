@@ -1,4 +1,5 @@
 const debug = require('debug');
+const moment = require('moment');
 //const emailform = require("./emailform");
 
 const cron = require('node-cron');
@@ -29,7 +30,7 @@ console.log("dirPath: ", dirPath)
 const git = require('simple-git')();
 const remote = `https://${USER}:${PASS}@${REPO}`;
 
-console.log('Remote:', remote) 
+console.log('Remote:', remote)
 
 git.addConfig('user.email', 'bitkarrot@bitcoin.org.hk');
 git.addConfig('user.name', 'Bitkarrot');
@@ -39,18 +40,15 @@ git.addConfig('user.name', 'Bitkarrot');
 async function BTCDaily() {
     let url = "https://api.coingecko.com/api/v3/coins/bitcoin/history?localization=false&date="
 
-    const today = new Date()
-    const day = today.getDate() - 1 // one day earlier, lag in date
-    const month = today.getMonth() + 1
-    const year = today.getFullYear()
-    const newdate = day + "-" + month + "-" + year
+    const yesterday = moment().subtract(1, 'days') // YYYY-MM-DD
+    const reverse = yesterday.format('DD-MM-YYYY')
 
     // format is YYYY-MM-DD
-    const dbdate = year + "-" + month + "-" + day
-    let full_url = url + newdate
+    const dbdate = yesterday.format('YYYY-MM-DD')
+    let full_url = url + reverse
     let row = {}
     console.log("db date: ", dbdate)
-    console.log("new date format:  ", newdate, "\n")
+    console.log("new date format:  ", reverse, "\n")
 
     await axios.get(full_url).then(
         async function(response) {
