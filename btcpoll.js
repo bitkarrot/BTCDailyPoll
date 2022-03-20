@@ -32,8 +32,9 @@ const remote = `https://${USER}:${PASS}@${REPO}`;
 
 console.log('Remote:', remote)
 
-git.addConfig('user.email', 'bitkarrot@bitcoin.org.hk');
-git.addConfig('user.name', 'Bitkarrot');
+const email = process.env.EMAIL
+git.addConfig('user.email', email);
+git.addConfig('user.name', USER);
 
 
 // get btc/usd and btc/hkd daily rate
